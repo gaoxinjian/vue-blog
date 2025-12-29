@@ -52,3 +52,12 @@ npm run test:unit
 ```sh
 npm run lint
 ```
+
+# Vue3 Blog
+
+![Vue3](https://img.shields.io/badge/Vue-3.x-42b883)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178c6)
+![Vite](https://img.shields.io/badge/Vite-5.x-646cff)
+![Element Plus](https://img.shields.io/badge/Element%20Plus-2.x-409eff)
+
+基于 Vue3 + TypeScript + Vite 构建的现代化个人博客系统
