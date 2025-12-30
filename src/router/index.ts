@@ -30,6 +30,11 @@ const router = createRouter({
       props: true,
     },
     {
+      path: '/categories',
+      name: 'categories',
+      component: () => import('@/views/CategoriesPage.vue'),
+    },
+    {
       path: '/tags',
       name: 'tags',
       component: () => import('@/views/TagsPage.vue'),

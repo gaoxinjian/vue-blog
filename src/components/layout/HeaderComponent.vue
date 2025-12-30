@@ -12,7 +12,12 @@
       <!-- 导航菜单，桌面版 -->
       <nav class="desktop-nav">
         <ul class="nav-list">
-          <li v-for="item in navItems" :key="item.path" @click="navigateTo(item.path)">
+          <li
+            v-for="item in navItems"
+            :key="item.path"
+            @click="navigateTo(item.path)"
+            :class="['nav-item', { active: isActive(item.path) }]"
+          >
             <el-icon v-if="item.icon" class="nav-icon">
               <component :is="item.icon" />
             </el-icon>
@@ -23,17 +28,6 @@
 
       <!-- 右侧功能区域 -->
       <div class="right-area">
-        <!-- 搜索框（暂时隐藏，后续实现） -->
-        <!-- <div class="search-box">
-          <el-input
-            v-model="searchText"
-            placeholder="搜索文章..."
-            size="small"
-            :prefix-icon="Search"
-            class="search-input"
-          />
-        </div> -->
-
         <!-- 暗色切换 -->
         <div class="theme-toggle" @click="toggleDarkMode">
           <el-tooltip :content="isDark ? '切换到亮色模式' : '切换到暗色模式'" placement="bottom">
@@ -128,7 +122,7 @@
             <span>登录</span>
           </li>
           <li v-if="!isLoginedIn" class="mobile-nav-item" @click="goToRegister">
-            <el-icon><UserPlus /></el-icon>
+            <el-icon><User /></el-icon>
             <span>注册</span>
           </li>
           <li v-if="isLoginedIn" class="mobile-nav-item" @click="handleUserCommand('logout')">
@@ -168,7 +162,7 @@ import {
   Menu,
   Sunny,
   Moon,
-  /* UserPlus,
+  /*
   Search, */
 } from '@element-plus/icons-vue'
 // import { id } from 'element-plus/es/locales.mjs'
@@ -240,13 +234,13 @@ const toggleMobileMenu = () => {
 const handleUserCommand = (command: string) => {
   switch (command) {
     case 'profile':
-      router.push('/profile')
+      // router.push('/profile')
       break
     case 'articles':
-      router.push('/my-articles')
+      // router.push('/my-articles')
       break
     case 'write':
-      router.push('/write')
+      // router.push('/write')
       break
     case 'logout':
       // 处理退出登录
@@ -319,7 +313,7 @@ onMounted(() => {
   transition: color 0.3s ease;
 }
 .desktop-nav {
-  @media (max-width: 768px) {
+  @media (max-width: 850px) {
     display: none;
   }
 }

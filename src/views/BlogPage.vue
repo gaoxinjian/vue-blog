@@ -1,12 +1,6 @@
 <!-- src/views/BlogPage.vue -->
 <template>
   <div class="blog-page">
-    <!-- 页头 -->
-    <div class="page-header">
-      <h1 class="page-title">博客文章</h1>
-      <p class="page-subtitle">探索最新的技术文章和教程</p>
-    </div>
-
     <div class="blog-container">
       <!-- 侧边栏筛选区 -->
       <aside class="sidebar">
@@ -32,8 +26,8 @@
           </template>
           <div class="filter-content">
             <el-radio-group v-model="selectedCategory" @change="handleCategoryChange">
-              <el-radio-button label="">全部</el-radio-button>
-              <el-radio-button v-for="category in categories" :key="category" :label="category">
+              <el-radio-button value="all">全部</el-radio-button>
+              <el-radio-button v-for="category in categories" :key="category" :value="category">
                 {{ category }}
               </el-radio-button>
             </el-radio-group>
@@ -65,7 +59,7 @@
         <el-card class="filter-card">
           <template #header>
             <div class="filter-header">
-              <el-icon><Fire /></el-icon>
+              <el-icon><PriceTag /></el-icon>
               <span>热门文章</span>
             </div>
           </template>
@@ -152,6 +146,7 @@ import { useArticleStore, type ArticleState } from '@/stores/article'
 import ArticleCard from '@/components/common/ArticleCard.vue'
 import { Search, Folder, PriceTag } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
+import { storeToRefs } from 'pinia'
 
 const router = useRouter()
 const articleStore = useArticleStore()
@@ -164,8 +159,9 @@ const currentPage = ref(1)
 const pageSize = ref(6)
 
 // 从store中获取数据
-const { fetchArticles, isLoading, filteredArticles, categories, allTags, likeArticle } =
-  articleStore
+const { isLoading, filteredArticles, categories, allTags } = storeToRefs(articleStore)
+
+const { fetchArticles, likeArticle } = articleStore
 
 // 计算属性
 const hasActiveFilters = computed(() => {
@@ -173,13 +169,13 @@ const hasActiveFilters = computed(() => {
 })
 
 const popularArticles = computed(() => {
-  return [...filteredArticles].sort((a, b) => b.views - a.views).slice(0, 5)
+  return [...filteredArticles.value].sort((a, b) => b.views - a.views).slice(0, 5)
 })
 
 const paginatedArticles = computed(() => {
   const start = (currentPage.value - 1) * pageSize.value
   const end = start + pageSize.value
-  return filteredArticles.slice(start, end)
+  return filteredArticles.value.slice(start, end)
 })
 
 // 方法
@@ -255,7 +251,6 @@ const formatDate = (dateString: string) => {
 // 生命周期
 onMounted(async () => {
   await fetchArticles()
-
   // 从store同步筛选状态
   searchQuery.value = articleStore.searchQuery
   selectedCategory.value = articleStore.selectedCategory
@@ -266,30 +261,6 @@ onMounted(async () => {
 <style scoped>
 .blog-page {
   padding: 20px 0 40px;
-}
-
-.page-header {
-  text-align: center;
-  margin-bottom: 40px;
-  padding: 0 20px;
-}
-
-.page-title {
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin-bottom: 12px;
-  color: var(--el-text-color-primary);
-  background: linear-gradient(135deg, var(--el-color-primary), #a855f7);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.page-subtitle {
-  font-size: 1.1rem;
-  color: var(--el-text-color-secondary);
-  max-width: 600px;
-  margin: 0 auto;
 }
 
 .blog-container {
@@ -393,6 +364,7 @@ onMounted(async () => {
   line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -410,6 +382,7 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   gap: 24px;
+  padding-top: 0;
 }
 
 .active-filters {
@@ -471,14 +444,6 @@ onMounted(async () => {
 @media (max-width: 768px) {
   .articles-grid {
     grid-template-columns: 1fr;
-  }
-
-  .page-title {
-    font-size: 2rem;
-  }
-
-  .page-subtitle {
-    font-size: 1rem;
   }
 }
 </style>

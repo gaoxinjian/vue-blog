@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
-import type { A } from 'vue-router/dist/router-CWoNjPRp.mjs'
+import { ref, computed, watchEffect } from 'vue'
+// import type { A } from 'vue-router/dist/router-CWoNjPRp.mjs'
 
 // 文章状态接口
 export interface ArticleState {
@@ -143,7 +143,9 @@ export const useArticleStore = defineStore('article', () => {
     return Math.ceil(totalArticles.value / limit.value)
   })
 
-  const filteredArticles = computed(() => {
+  const filteredArticles = ref<ArticleState[]>([])
+  // 计算过滤文章的函数
+  const computeFilteredArticles = () => {
     let filtered = [...articles.value]
 
     // 搜索过滤
@@ -168,6 +170,9 @@ export const useArticleStore = defineStore('article', () => {
     }
 
     return filtered
+  }
+  watchEffect(() => {
+    filteredArticles.value = computeFilteredArticles()
   })
 
   const categories = computed(() => {
@@ -189,7 +194,7 @@ export const useArticleStore = defineStore('article', () => {
 
     try {
       // 模拟API延迟
-      await new Promise((resolve) => setTimeout(resolve, 500))
+      await new Promise((resolve) => setTimeout(resolve, 100))
 
       // 应用查询参数
       if (params?.search) searchQuery.value = params.search
@@ -331,6 +336,7 @@ export const useArticleStore = defineStore('article', () => {
     totalArticles,
     isLoading,
     limit,
+    mockArticles,
 
     page,
     searchQuery,
