@@ -149,7 +149,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 
 import {
@@ -172,24 +172,28 @@ import {
   Search, */
 } from '@element-plus/icons-vue'
 // import { id } from 'element-plus/es/locales.mjs'
-
-// 模拟用户数据
-const mockUser = {
-  id: 1,
-  name: '测试用户',
-  email: 'example@example.com',
-  avatar: 'https://i.pravatar.cc/150?img=3',
-}
+import { useUserStore } from '@/stores/user'
+import { useThemeStore } from '@/stores/theme'
 
 // 响应式数据
 // const searchText = ref('')
 const showMobileMenu = ref(false)
-const isDark = ref(false)
-const isLoginedIn = ref(false)
 
 // 路由
 const router = useRouter()
 const route = useRoute()
+
+// 使用Pinia Store
+const userStore = useUserStore()
+const themeStore = useThemeStore()
+
+// 计算属性，用store里的数据
+const isLoginedIn = computed(() => userStore.isLogined)
+const userName = computed(() => userStore.user?.username || '未登录')
+const userEmail = computed(() => userStore.user?.email || '')
+const userAvatar = computed(() => userStore.user?.avatarUrl || '')
+const userInitial = computed(() => userStore.userInitial)
+const isDark = computed(() => themeStore.isDark)
 
 // 导航菜单项
 const navItems = [
@@ -199,14 +203,6 @@ const navItems = [
   { name: '标签', path: '/tags', icon: PriceTag },
   { name: '管理', path: '/admin', icon: Setting, requireAuth: true },
 ]
-
-// 计算属性
-const userName = computed(() => (isLoginedIn.value ? mockUser.name : '未登录'))
-const userEmail = computed(() => (isLoginedIn.value ? mockUser.email : ''))
-const userAvatar = computed(() => (isLoginedIn.value ? mockUser.avatar : ''))
-const userInitial = computed(() =>
-  isLoginedIn.value ? userName.value.charAt(0).toUpperCase() : '',
-)
 
 // 方法
 const isActive = (path: string) => {
@@ -234,15 +230,7 @@ const goToRegister = () => {
 }
 
 const toggleDarkMode = () => {
-  isDark.value = !isDark.value
-  // 暂时简单切换，后续实现完整的暗色模式逻辑
-  if (isDark.value) {
-    document.documentElement.classList.add('dark')
-    localStorage.setItem('theme', 'dark')
-  } else {
-    document.documentElement.classList.remove('dark')
-    localStorage.setItem('theme', 'light')
-  }
+  themeStore.toggleTheme()
 }
 
 const toggleMobileMenu = () => {
@@ -262,26 +250,17 @@ const handleUserCommand = (command: string) => {
       break
     case 'logout':
       // 处理退出登录
-      isLoginedIn.value = false
+      userStore.logout()
       router.push('/')
       break
   }
   showMobileMenu.value = false
 }
 
-// 初始化暗色模式
-const initTheme = () => {
-  const savedTheme = localStorage.getItem('theme')
-  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-
-  if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
-    isDark.value = true
-    document.documentElement.classList.add('dark')
-  }
-}
-
-// 生命周期
-initTheme()
+onMounted(() => {
+  userStore.initialize()
+  themeStore.initTheme()
+})
 </script>
 
 <style scoped lang="scss">

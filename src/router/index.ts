@@ -14,6 +14,11 @@ const router = createRouter({
       component: () => import('@/views/LoginPage.vue'),
     },
     {
+      path: '/register',
+      name: 'register',
+      component: () => import('@/views/RegisterPage.vue'),
+    },
+    {
       path: '/blog',
       name: 'blog',
       component: () => import('@/views/BlogPage.vue'),
@@ -56,6 +61,12 @@ const router = createRouter({
       props: true,
     },
   ],
+})
+
+// 添加路由守卫（可选）
+router.beforeEach((to, from, next) => {
+  // 这里可以添加权限检查等逻辑
+  next()
 })
 
 export default router
