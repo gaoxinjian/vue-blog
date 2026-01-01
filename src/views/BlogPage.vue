@@ -250,6 +250,8 @@ const formatDate = (dateString: string) => {
 
 // 生命周期
 onMounted(async () => {
+  console.log('blog page mounted')
+
   await fetchArticles()
   // 从store同步筛选状态
   searchQuery.value = articleStore.searchQuery

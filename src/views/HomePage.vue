@@ -2,12 +2,6 @@
 <template>
   <!-- 假设 Header 是独立的，例如在 App.vue 或 Layout 组件中 -->
   <div class="home-container">
-    <!-- 1. 个人品牌标语区 (在Header下方) -->
-    <section class="hero-section">
-      <h1>探索代码与生活的交响曲</h1>
-      <p class="subtitle">这里记录着我的阅读、旅行、音乐，以及一切热爱。</p>
-    </section>
-
     <!-- 2. 主要内容区域 (左右两栏) -->
     <el-row :gutter="30" class="main-content">
       <!-- 左栏：智能文章流 (较宽) -->
@@ -19,6 +13,7 @@
           <!-- 智能文章流列表将在这里渲染 -->
           <div class="article-flow">
             <article-card
+              class="article-card"
               v-for="article in paginatedArticles"
               :key="article.id"
               :article="article"
@@ -91,6 +86,7 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 const articleStore = useArticleStore()
 const { filteredArticles } = storeToRefs(articleStore)
+const { fetchArticles } = articleStore
 const pageSize = ref(6)
 
 const currentPage = ref(1)
@@ -127,7 +123,8 @@ const goToArticle = (id: number) => {
 }
 
 // 可以在此处添加从 Pinia Store 或 API 获取数据的逻辑
-onMounted(() => {
+onMounted(async () => {
+  await fetchArticles()
   // 例如：fetchHomeData();
 })
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -141,20 +138,6 @@ const openGitHub = () => {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0.5rem 1.5rem 1rem 1.5rem;
-}
-.hero-section {
-  text-align: center;
-  margin-bottom: 1rem;
-  padding: 0.5rem 0;
-}
-.hero-section h1 {
-  font-size: 2.5rem;
-  margin-bottom: 0.5rem;
-  color: #2c3e50;
-}
-.hero-section .subtitle {
-  font-size: 1.1rem;
-  color: #7f8c8d;
 }
 .section-card {
   background: #fff;
@@ -173,6 +156,39 @@ const openGitHub = () => {
 .section-card h2 .el-icon {
   margin-right: 8px;
 }
+.article-card {
+  margin-bottom: 10px;
+}
+
+/* 为目标列添加粘性定位 */
+.main-content > .el-col:last-child {
+  position: sticky;
+  top: 69px; /* 根据 Header 高度调整，一般比 Header 高 20px，留出呼吸空间 */
+  height: fit-content; /* 高度由内容决定 */
+  max-height: calc(100vh - 100px); /* 可选：防止过高，设置最大高度 */
+  overflow-y: auto; /* 可选：如果内容很多，允许内部滚动 */
+
+  /* 新增：隐藏滚动条的核心代码 */
+  overflow-y: auto; /* 确保可以滚动 */
+  scrollbar-width: none; /* 针对 Firefox：隐藏滚动条 */
+}
+/* 针对 Webkit 内核的浏览器 (Chrome, Safari, Edge) */
+.main-content > .el-col:last-child::-webkit-scrollbar {
+  display: none; /* 完全隐藏滚动条 */
+}
+/* 添加一个平滑的滚动效果 */
+.main-content > .el-col:last-child {
+  scroll-behavior: smooth;
+}
+/* 可选：优化右栏内部模块的排列 */
+.main-content > .el-col:last-child .section-card {
+  margin-bottom: 1.5rem; /* 保持模块间距 */
+}
+/* 确保最后一个模块没有过大的底边距 */
+.main-content > .el-col:last-child .section-card:last-child {
+  margin-bottom: 0;
+}
+
 /* 兴趣导航卡片样式 */
 .interest-nav .nav-link {
   text-decoration: none;

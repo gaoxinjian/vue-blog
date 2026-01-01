@@ -33,6 +33,6 @@ import HeaderComponent from '@/components/layout/HeaderComponent.vue'
 }
 .main-content {
   flex: 1;
-  padding: 20px 0;
+  padding: 10px 0;
 }
 </style>
