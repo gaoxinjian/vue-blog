@@ -246,6 +246,7 @@ export const useArticleStore = defineStore('article', () => {
         likes: 0,
         comments: 0,
       }
+      mockArticles.push(newArticle)
       articles.value.push(newArticle)
       totalArticles.value += 1
       return newArticle

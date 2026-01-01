@@ -65,6 +65,19 @@ const router = createRouter({
       component: () => import('@/views/ArticleDetail.vue'),
       props: true,
     },
+    {
+      path: '/article/create',
+      name: 'ArticleCreate',
+      component: () => import('@/views/ArticleEditPage.vue'),
+      meta: { requiresAuth: true }, // 如果需要权限控制
+    },
+    {
+      path: '/article/edit/:id',
+      name: 'ArticleEdit',
+      component: () => import('@/views/ArticleEditPage.vue'),
+      props: true,
+      meta: { requiresAuth: true },
+    },
   ],
 })
 

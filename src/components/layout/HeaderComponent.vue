@@ -240,7 +240,7 @@ const handleUserCommand = (command: string) => {
       // router.push('/my-articles')
       break
     case 'write':
-      // router.push('/write')
+      router.push('/article/create')
       break
     case 'logout':
       // 处理退出登录

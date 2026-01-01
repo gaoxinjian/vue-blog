@@ -10,9 +10,23 @@ import skipFormatting from '@vue/eslint-config-prettier/skip-formatting'
 // More info at https://github.com/vuejs/eslint-config-typescript/#advanced-setup
 
 export default defineConfigWithVueTs(
+  // 主配置对象：将 rules 直接放在这里
   {
     name: 'app/files-to-lint',
     files: ['**/*.{vue,ts,mts,tsx}'],
+    // 关键：rules 必须放在这个对象内部
+    rules: {
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          varsIgnorePattern: '^(Editor|Viewer|\\$|_|h)$',
+          argsIgnorePattern: '^_',
+          // 可选：明确忽略模板中使用的组件
+          ignoreRestSiblings: true,
+          caughtErrors: 'none',
+        },
+      ],
+    },
   },
 
   globalIgnores(['**/dist/**', '**/dist-ssr/**', '**/coverage/**']),

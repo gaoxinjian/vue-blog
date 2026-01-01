@@ -10,6 +10,10 @@
       "@components/*": ["src/components/*"],
       "@api/*": ["src/api/*"],
       "@utils/*": ["src/utils/*"]
-    }
+    },
+
+    // 1. 移除或关闭 verbatimModuleSyntax（如果存在）
+    // "verbatimModuleSyntax": true, // 删除或改为 false
+    "verbatimModuleSyntax": false
   }
 }
