@@ -1,6 +1,6 @@
 <!-- src/views/BlogPage.vue -->
 <template>
-  <div class="blog-page">
+  <div class="blog-page" :key="$route.path">
     <div class="blog-container">
       <!-- 侧边栏筛选区 -->
       <aside class="sidebar">

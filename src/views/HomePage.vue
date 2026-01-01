@@ -1,6 +1,5 @@
 <!-- src/views/HomePage.vue -->
 <template>
-  <!-- 假设 Header 是独立的，例如在 App.vue 或 Layout 组件中 -->
   <div class="home-container">
     <!-- 2. 主要内容区域 (左右两栏) -->
     <el-row :gutter="30" class="main-content">
@@ -13,10 +12,10 @@
           <!-- 智能文章流列表将在这里渲染 -->
           <div class="article-flow">
             <article-card
-              class="article-card"
               v-for="article in paginatedArticles"
               :key="article.id"
               :article="article"
+              class="article-card"
               @click="goToArticle(article.id)"
             />
           </div>
@@ -67,7 +66,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, onUnmounted } from 'vue'
 import {
   Collection,
   Grid,
@@ -78,31 +77,31 @@ import {
   Place,
   MapLocation,
 } from '@element-plus/icons-vue'
-// import ArticleCard from '@/components/ArticleCard.vue'
 import ArticleCard from '@/components/common/ArticleCard.vue'
 import { storeToRefs } from 'pinia'
 import { useArticleStore } from '@/stores/article'
 import { useRouter } from 'vue-router'
+
 const router = useRouter()
 const articleStore = useArticleStore()
 const { filteredArticles } = storeToRefs(articleStore)
 const { fetchArticles } = articleStore
 const pageSize = ref(6)
-
 const currentPage = ref(1)
 
 // --- 兴趣导航数据 ---
 const interestNavs = ref([
-  { id: 1, text: '阅读角落', path: '/reading', icon: Reading },
-  { id: 2, text: '音乐空间', path: '/music', icon: Headset },
-  { id: 3, text: '旅行纪行', path: '/travel', icon: Place },
-  { id: 4, text: '徒步日志', path: '/hiking', icon: MapLocation },
+  { id: 1, text: '阅读角落', path: '/', icon: Reading },
+  { id: 2, text: '音乐空间', path: '/', icon: Headset },
+  { id: 3, text: '旅行纪行', path: '/', icon: Place },
+  { id: 4, text: '徒步日志', path: '/', icon: MapLocation },
 ])
 
 const paginatedArticles = computed(() => {
   const start = (currentPage.value - 1) * pageSize.value
   const end = start + pageSize.value
-  return filteredArticles.value.slice(start, end)
+  // return filteredArticles.value.slice(start, end)
+  return (filteredArticles.value || []).slice(start, end)
 })
 
 // --- 音乐播放列表数据 (示例) ---
@@ -122,11 +121,28 @@ const goToArticle = (id: number) => {
   router.push(`/article/${id}`)
 }
 
+// 添加一个标志，表示数据是否已加载
+const isDataLoaded = ref(false)
+
 // 可以在此处添加从 Pinia Store 或 API 获取数据的逻辑
 onMounted(async () => {
-  await fetchArticles()
-  // 例如：fetchHomeData();
+  try {
+    await fetchArticles() // 假设这个动作会更新 filteredArticles
+    isDataLoaded.value = true
+    console.log('首页数据加载完成')
+  } catch (error) {
+    console.error('首页数据加载失败:', error)
+    // 即使失败，也设置标志，避免无限等待
+    isDataLoaded.value = true
+  }
 })
+
+// [修复] 9. 在组件卸载前，可以清理一些可能引起冲突的副作用（如果需要的话）
+onUnmounted(() => {
+  console.log('HomePage 组件卸载')
+  // 例如：清除未完成的定时器、取消未完成的网络请求等
+})
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const openGitHub = () => {
   window.open('https://github.com/gaoxinjian/ggalaxy-blog', '_blank')
@@ -138,6 +154,7 @@ const openGitHub = () => {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0.5rem 1.5rem 1rem 1.5rem;
+  display: block;
 }
 .section-card {
   background: #fff;
@@ -166,7 +183,6 @@ const openGitHub = () => {
   top: 69px; /* 根据 Header 高度调整，一般比 Header 高 20px，留出呼吸空间 */
   height: fit-content; /* 高度由内容决定 */
   max-height: calc(100vh - 100px); /* 可选：防止过高，设置最大高度 */
-  overflow-y: auto; /* 可选：如果内容很多，允许内部滚动 */
 
   /* 新增：隐藏滚动条的核心代码 */
   overflow-y: auto; /* 确保可以滚动 */

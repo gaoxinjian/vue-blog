@@ -71,6 +71,7 @@ const router = createRouter({
 // 添加路由守卫（可选）
 router.beforeEach((to, from, next) => {
   // 这里可以添加权限检查等逻辑
+  console.log(`Navigating to ${String(to.name)} from ${String(from.name)}`)
   next()
 })
 
