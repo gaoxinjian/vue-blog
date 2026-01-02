@@ -1,3 +1,3 @@
 <template>
-  <p>分类</p>
+  <h1>分类</h1>
 </template>
