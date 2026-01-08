@@ -11,8 +11,9 @@
           </h2>
           <!-- 智能文章流列表将在这里渲染 -->
           <div class="article-flow">
+            <el-skeleton v-if="!isDataLoaded" :rows="3" animated />
             <article-card
-              v-for="article in paginatedArticles"
+              v-for="article in articles"
               :key="article.id"
               :article="article"
               class="article-card"
@@ -84,7 +85,7 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 const articleStore = useArticleStore()
-const { filteredArticles } = storeToRefs(articleStore)
+const { articles } = storeToRefs(articleStore)
 const { fetchArticles } = articleStore
 const pageSize = ref(6)
 const currentPage = ref(1)
@@ -101,7 +102,7 @@ const paginatedArticles = computed(() => {
   const start = (currentPage.value - 1) * pageSize.value
   const end = start + pageSize.value
   // return filteredArticles.value.slice(start, end)
-  return (filteredArticles.value || []).slice(start, end)
+  return (articles.value || []).slice(start, end)
 })
 
 // --- 音乐播放列表数据 (示例) ---
@@ -117,7 +118,7 @@ const currentStatus = ref({
   updateTime: '更新于今天上午',
 })
 
-const goToArticle = (id: number) => {
+const goToArticle = (id: string) => {
   router.push(`/article/${id}`)
 }
 

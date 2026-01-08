@@ -34,3 +34,13 @@ coverage
 
 # Vitest
 __screenshots__/
+
+
+.env.local
+.env.*.local
+.vercel
+.env.development
+.env.production
+
+# 但保留 .env.example
+!.env.example

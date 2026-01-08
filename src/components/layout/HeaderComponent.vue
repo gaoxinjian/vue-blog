@@ -166,7 +166,7 @@ import {
   Search, */
 } from '@element-plus/icons-vue'
 // import { id } from 'element-plus/es/locales.mjs'
-import { useUserStore } from '@/stores/user'
+
 import { useThemeStore } from '@/stores/theme'
 
 // 响应式数据
@@ -178,10 +178,37 @@ const router = useRouter()
 const route = useRoute()
 
 // 使用Pinia Store
-const userStore = useUserStore()
+
+const userStore = {
+  isLogined: false,
+  user: {
+    username: '',
+    email: '',
+    avatarUrl: '',
+  },
+  userInitial: '',
+  initialize() {
+    // 模拟初始化用户数据
+    this.isLogined = true
+    this.user = {
+      username: '游客',
+      email: 'zhangsan@example.com',
+      avatarUrl: '',
+    }
+  },
+  logout() {
+    this.isLogined = false
+    this.user = {
+      username: '',
+      email: '',
+      avatarUrl: '',
+    }
+  },
+}
 const themeStore = useThemeStore()
 
 // 计算属性，用store里的数据
+userStore.initialize() // 初始化用户数据
 const isLoginedIn = computed(() => userStore.isLogined)
 const userName = computed(() => userStore.user?.username || '未登录')
 const userEmail = computed(() => userStore.user?.email || '')

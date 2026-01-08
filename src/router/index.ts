@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -81,11 +82,27 @@ const router = createRouter({
   ],
 })
 
-// 添加路由守卫（可选）
-router.beforeEach((to, from, next) => {
-  // 这里可以添加权限检查等逻辑
-  console.log(`Navigating to ${String(to.name)} from ${String(from.name)}`)
-  next()
+// 路由守卫
+router.beforeEach(async (to, from, next) => {
+  const authStore = useAuthStore()
+
+  // 检查路由是否需要认证
+  if (to.meta.requiresAuth) {
+    // 检查用户是否已登录
+    const isAuthenticated = authStore.isAuthenticated
+
+    if (!isAuthenticated) {
+      // 未登录，重定向到登录页
+      next('/login')
+    } else {
+      next()
+    }
+  } else if (to.path === '/login' && authStore.isAuthenticated) {
+    // 已登录用户访问登录页，重定向到首页
+    next('/')
+  } else {
+    next()
+  }
 })
 
 export default router

@@ -7,9 +7,9 @@
     @click="$emit('click')"
   >
     <!-- 文章封面 -->
-    <div v-if="article.coverImage" class="article-cover">
+    <div v-if="article.cover_image" class="article-cover">
       <img
-        :src="article.coverImage"
+        :src="article.cover_image"
         :alt="article.title"
         class="cover-image"
         @error="handleImageError"
@@ -32,7 +32,7 @@
 
       <!-- 摘要 -->
       <p class="article-summary">
-        {{ article.summary }}
+        {{ '摘要' }}
       </p>
 
       <!-- 标签 -->
@@ -56,16 +56,16 @@
       <div class="article-meta">
         <div class="meta-left">
           <div class="author-info">
-            <el-avatar :size="24" :src="getAvatarUrl(article.author)">
-              {{ article.author.charAt(0) }}
+            <el-avatar :size="24" :src="getAvatarUrl(user.userEmail)">
+              {{ user.userEmail }}
             </el-avatar>
-            <span class="author-name">{{ article.author }}</span>
+            <span class="author-name">{{ user.userEmail }}</span>
           </div>
 
           <div class="meta-divider">·</div>
 
           <span class="meta-date">
-            {{ formatDate(article.createdAt) }}
+            {{ formatDate(article.created_at) }}
           </span>
         </div>
 
@@ -73,19 +73,19 @@
           <!-- 阅读量 -->
           <div class="meta-item" @click.stop>
             <el-icon><View /></el-icon>
-            <span>{{ formatNumber(article.views) }}</span>
+            <span>{{ formatNumber(0) }}</span>
           </div>
 
           <!-- 点赞 -->
           <div class="meta-item" @click.stop="$emit('like')">
             <el-icon :class="{ liked: isLiked }"><Star /></el-icon>
-            <span>{{ formatNumber(article.likes) }}</span>
+            <span>{{ formatNumber(0) }}</span>
           </div>
 
           <!-- 评论 -->
           <div class="meta-item" @click.stop>
             <el-icon><ChatDotRound /></el-icon>
-            <span>{{ formatNumber(article.comments) }}</span>
+            <span>{{ formatNumber(0) }}</span>
           </div>
         </div>
       </div>
@@ -95,11 +95,13 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import type { ArticleState } from '@/stores/article'
+// import type { ArticleState } from '@/stores/article'
+import { Article } from '@/api/types'
 import { View, Star, ChatDotRound } from '@element-plus/icons-vue'
+import { useAuthStore } from '@/stores/auth'
 
 interface Props {
-  article: ArticleState
+  article: Article
 }
 
 defineProps<Props>()
@@ -107,6 +109,9 @@ defineEmits<{
   click: []
   like: []
 }>()
+
+const userStore = useAuthStore()
+const user = ref(userStore)
 
 const isLiked = ref(false)
 
@@ -144,10 +149,11 @@ const formatDate = (dateString: string) => {
 }
 
 const formatNumber = (num: number) => {
-  if (num >= 1000) {
-    return (num / 1000).toFixed(1) + 'k'
-  }
-  return num.toString()
+  return 0
+  // if (num >= 1000) {
+  //   return (num / 1000).toFixed(1) + 'k'
+  // }
+  // return num.toString()
 }
 </script>
 
