@@ -67,7 +67,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed, onUnmounted } from 'vue'
+import { ref, onMounted, computed, onUnmounted, markRaw } from 'vue'
 import {
   Collection,
   Grid,
@@ -92,10 +92,10 @@ const currentPage = ref(1)
 
 // --- 兴趣导航数据 ---
 const interestNavs = ref([
-  { id: 1, text: '阅读角落', path: '/', icon: Reading },
-  { id: 2, text: '音乐空间', path: '/', icon: Headset },
-  { id: 3, text: '旅行纪行', path: '/', icon: Place },
-  { id: 4, text: '徒步日志', path: '/', icon: MapLocation },
+  { id: 1, text: '阅读角落', path: '/', icon: markRaw(Reading) },
+  { id: 2, text: '音乐空间', path: '/', icon: markRaw(Headset) },
+  { id: 3, text: '旅行纪行', path: '/', icon: markRaw(Place) },
+  { id: 4, text: '徒步日志', path: '/', icon: markRaw(MapLocation) },
 ])
 
 const paginatedArticles = computed(() => {
