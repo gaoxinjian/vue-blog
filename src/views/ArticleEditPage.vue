@@ -128,7 +128,8 @@ import zhHans from 'bytemd/locales/zh_Hans.json'
 import 'bytemd/dist/index.css'
 import 'highlight.js/styles/github.css'
 import 'github-markdown-css/github-markdown.css'
-import { useArticleStore, type ArticleState } from '@/stores/article'
+import { useArticleStore } from '@/stores/article'
+import { Article } from '@/api/types'
 
 // 在 ArticleEditorView.vue 的 <script setup> 顶部添加
 interface ArticleFormData {
@@ -214,21 +215,21 @@ const handleEditorChange = (value: string) => {
 // 修改 loadArticleData 方法
 const loadArticleData = async () => {
   if (isEditMode.value && route.params.id) {
-    const articleId = Number(route.params.id)
+    const articleId = String(route.params.id)
     try {
       // 调用store方法获取文章
-      const article = await articleStore.fetchArticleById(articleId)
+      await articleStore.fetchArticle(articleId)
+      const article = articleStore.currentArticle
 
       if (article) {
         // 将store的数据结构映射到表单
-        form.id = article.id
+        form.id = Number(article.id)
         form.title = article.title
-        form.category = article.category
+        form.category = String(article.category)
         form.tags = article.tags || []
-        form.summary = article.summary || ''
         form.content = article.content || ''
         // 注意映射：这里用isPublished，不是status
-        form.isPublished = article.isPublished || false
+        form.isPublished = article.is_published || false
 
         // 如果编辑页面需要显示作者信息
         // form.author = article.author
@@ -254,32 +255,41 @@ const handleSubmit = async (action: 'publish' | 'draft') => {
   try {
     // 准备要提交的数据 - 适配你的store接口
     const articleData: Omit<
-      ArticleState,
-      'id' | 'createdAt' | 'updatedAt' | 'views' | 'likes' | 'comments'
+      Article,
+      | 'id'
+      | 'createdAt'
+      | 'updatedAt'
+      | 'views'
+      | 'likes'
+      | 'comments'
+      | 'updated_at'
+      | 'published_at'
+      | 'author'
+      | 'author_id'
+      | 'cover_image'
+      | 'summary'
+      | 'tags'
+      | 'category'
+      | 'created_at'
     > = {
       title: form.title,
       content: form.content,
-      summary: form.summary,
+      excerpt: form.summary,
       // 这里需要实际的作者信息，可以先写死或从用户store获取
-      author: '当前用户', // 需要从用户store获取
-      authorId: 1, // 需要从用户store获取
-      category: form.category,
-      tags: form.tags,
-      coverImage: form.coverImage || '',
-      isPublished: action === 'publish',
+      is_published: action === 'publish',
     }
 
     // 根据模式调用不同的store方法
     if (isEditMode.value && form.id) {
       // 编辑模式：调用updateArticle
-      await articleStore.updateArticle(form.id, {
+      await articleStore.updateArticle(String(form.id), {
+        id: String(form.id),
         title: form.title,
         content: form.content,
-        summary: form.summary,
         category: form.category,
         tags: form.tags,
-        coverImage: form.coverImage,
-        isPublished: action === 'publish',
+        cover_image: form.coverImage,
+        is_published: action === 'publish',
       })
       ElMessage.success('文章更新成功')
     } else {

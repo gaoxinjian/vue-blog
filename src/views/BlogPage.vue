@@ -44,7 +44,7 @@
           </template>
           <div class="filter-content tags">
             <el-tag
-              v-for="tag in allTags"
+              v-for="tag in tags"
               :key="tag"
               :type="selectedTag === tag ? 'primary' : 'info'"
               class="tag-item"
@@ -65,7 +65,7 @@
           </template>
           <div class="popular-articles">
             <div
-              v-for="article in popularArticles"
+              v-for="article in articles"
               :key="article.id"
               class="popular-article"
               @click="goToArticle(article.id)"
@@ -73,9 +73,9 @@
               <div class="popular-article-content">
                 <h4 class="popular-article-title">{{ article.title }}</h4>
                 <div class="popular-article-meta">
-                  <span>{{ formatDate(article.createdAt) }}</span>
+                  <span>{{ formatDate(article.created_at) }}</span>
                   <span>·</span>
-                  <span>{{ article.views }} 阅读</span>
+                  <span>{{ 99 }} 阅读</span>
                 </div>
               </div>
             </div>
@@ -98,7 +98,7 @@
 
         <!-- 文章列表 -->
         <div class="articles-grid">
-          <template v-if="filteredArticles.length > 0">
+          <template v-if="articles.length > 0">
             <article-card
               v-for="article in paginatedArticles"
               :key="article.id"
@@ -117,12 +117,12 @@
         </div>
 
         <!-- 分页 -->
-        <div v-if="filteredArticles.length > 0" class="pagination">
+        <div v-if="articles.length > 0" class="pagination">
           <el-pagination
             v-model:current-page="currentPage"
             v-model:page-size="pageSize"
             :page-sizes="[6, 12, 24, 48]"
-            :total="filteredArticles.length"
+            :total="articles.length"
             layout="total, sizes, prev, pager, next, jumper"
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
@@ -130,7 +130,7 @@
         </div>
 
         <!-- 加载状态 -->
-        <div v-if="isLoading" class="loading">
+        <div v-if="loading" class="loading">
           <el-skeleton :rows="6" animated />
         </div>
       </main>
@@ -142,7 +142,8 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { useArticleStore, type ArticleState } from '@/stores/article'
+import { useArticleStore } from '@/stores/article'
+import { Article } from '@/api/types'
 import ArticleCard from '@/components/common/ArticleCard.vue'
 import { Search, Folder, PriceTag } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
@@ -159,7 +160,7 @@ const currentPage = ref(1)
 const pageSize = ref(6)
 
 // 从store中获取数据
-const { isLoading, filteredArticles, categories, allTags } = storeToRefs(articleStore)
+const { loading, articles, categories, tags } = storeToRefs(articleStore)
 
 const { fetchArticles, likeArticle } = articleStore
 
@@ -168,43 +169,39 @@ const hasActiveFilters = computed(() => {
   return selectedCategory.value !== '' || selectedTag.value !== '' || searchQuery.value !== ''
 })
 
-const popularArticles = computed(() => {
-  return [...filteredArticles.value].sort((a, b) => b.views - a.views).slice(0, 5)
-})
-
 const paginatedArticles = computed(() => {
   const start = (currentPage.value - 1) * pageSize.value
   const end = start + pageSize.value
-  return filteredArticles.value.slice(start, end)
+  return articles.value.slice(start, end)
 })
 
 // 方法
 const handleSearch = () => {
-  articleStore.searchQuery = searchQuery.value
+  // articleStore.searchQuery = searchQuery.value
   currentPage.value = 1
 }
 
 const handleCategoryChange = (category: string) => {
   selectedCategory.value = category
-  articleStore.selectedCategory = category
+  // articleStore.selectedCategory = category
   currentPage.value = 1
 }
 
 const handleTagClick = (tag: string) => {
   selectedTag.value = tag === selectedTag.value ? '' : tag
-  articleStore.selectedTag = selectedTag.value
+  // articleStore.selectedTag = selectedTag.value
   currentPage.value = 1
 }
 
 const clearCategory = () => {
   selectedCategory.value = ''
-  articleStore.selectedCategory = ''
+  // articleStore.selectedCategory = ''
   currentPage.value = 1
 }
 
 const clearTag = () => {
   selectedTag.value = ''
-  articleStore.selectedTag = ''
+  // articleStore.selectedTag = ''
   currentPage.value = 1
 }
 
@@ -212,11 +209,11 @@ const clearAllFilters = () => {
   searchQuery.value = ''
   selectedCategory.value = ''
   selectedTag.value = ''
-  articleStore.resetFilters()
+  articleStore.reset()
   currentPage.value = 1
 }
 
-const handleLike = async (articleId: number) => {
+const handleLike = async (articleId: string) => {
   try {
     await likeArticle(articleId)
     ElMessage.success('点赞成功！')
@@ -225,7 +222,7 @@ const handleLike = async (articleId: number) => {
   }
 }
 
-const goToArticle = (id: number) => {
+const goToArticle = (id: string) => {
   router.push(`/article/${id}`)
 }
 
@@ -254,9 +251,9 @@ onMounted(async () => {
 
   await fetchArticles()
   // 从store同步筛选状态
-  searchQuery.value = articleStore.searchQuery
-  selectedCategory.value = articleStore.selectedCategory
-  selectedTag.value = articleStore.selectedTag
+  // searchQuery.value = articleStore.searchQuery
+  // selectedCategory.value = articleStore.selectedCategory
+  // selectedTag.value = articleStore.selectedTag
 })
 </script>
 

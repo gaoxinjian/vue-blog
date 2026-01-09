@@ -1,7 +1,7 @@
 <template>
   <div class="article-detail" v-if="article">
     <h1>{{ article.title }}</h1>
-    <div class="meta">发布于 {{ dayjs(article.createdAt).format('YYYY-MM-DD HH:mm') }}</div>
+    <div class="meta">发布于 {{ dayjs(article.published_at).format('YYYY-MM-DD HH:mm') }}</div>
     <!-- 关键：使用v-html渲染Markdown转换后的HTML -->
     <div class="content markdown-body" v-html="htmlContent"></div>
   </div>
@@ -14,20 +14,21 @@ import { useRoute } from 'vue-router'
 import { marked } from 'marked' // 使用你已有的marked库
 import hljs from 'highlight.js' // 使用你已有的highlight.js
 import 'highlight.js/styles/github.css' // 引入代码高亮样式
-import { type ArticleState, useArticleStore } from '@/stores/article'
+import { useArticleStore } from '@/stores/article'
+import { Article } from '@/api/types'
 import dayjs from 'dayjs'
 
 const route = useRoute()
 const articleStore = useArticleStore()
-const article = ref(<ArticleState | null>null)
+const article = ref(<Article | null>null)
 const htmlContent = ref('')
 
 onMounted(async () => {
-  const id = Number(route.params.id)
+  const id = String(route.params.id)
   // 方式1：从Pinia Store中查找（如果文章数据已全局加载）
   // article.value = articleStore.articles.find(item => item.id === id)
   // 方式2：调用独立的API接口获取单篇文章详情（更推荐）
-  await articleStore.fetchArticleById(id)
+  await articleStore.fetchArticle(id)
   article.value = articleStore.currentArticle
 
   // 配置marked使用highlight.js进行代码高亮

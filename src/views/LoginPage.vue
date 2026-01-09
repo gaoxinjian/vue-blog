@@ -66,13 +66,13 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { useUserStore } from '@/stores/user'
+// import { useUserStore } from '@/stores/user'
 import type { FormInstance, FormRules } from 'element-plus'
 import { User, Lock } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus' // 添加导入
 
 const router = useRouter()
-const userStore = useUserStore()
+// const userStore = useUserStore()
 const loginFormRef = ref<FormInstance>()
 const loading = ref(false)
 
@@ -104,27 +104,27 @@ const loginRules: FormRules = {
 const handleLogin = async () => {
   if (!loginFormRef.value) return
 
-  try {
-    const isValid = await loginFormRef.value.validate()
-    if (!isValid) return
+  // try {
+  //   const isValid = await loginFormRef.value.validate()
+  //   if (!isValid) return
 
-    loading.value = true
-    const result = await userStore.login(loginForm.username, loginForm.password)
+  //   loading.value = true
+  //   const result = await userStore.login(loginForm.username, loginForm.password)
 
-    if (result.success) {
-      ElMessage.success('登录成功！')
-      // 跳转到首页或原来的页面
-      const redirect = router.currentRoute.value.query.redirect as string
-      router.push(redirect || '/')
-    } else {
-      ElMessage.error(result.error || '登录失败')
-    }
-  } catch (error) {
-    ElMessage.error('登录过程中出现错误')
-    console.error(error)
-  } finally {
-    loading.value = false
-  }
+  //   if (result.success) {
+  //     ElMessage.success('登录成功！')
+  //     // 跳转到首页或原来的页面
+  //     const redirect = router.currentRoute.value.query.redirect as string
+  //     router.push(redirect || '/')
+  //   } else {
+  //     ElMessage.error(result.error || '登录失败')
+  //   }
+  // } catch (error) {
+  //   ElMessage.error('登录过程中出现错误')
+  //   console.error(error)
+  // } finally {
+  //   loading.value = false
+  // }
 }
 
 const goToRegister = () => {
@@ -140,9 +140,9 @@ onMounted(() => {
   }
 
   // 如果用户已登录，跳转到首页
-  if (userStore.isLogined) {
-    router.push('/')
-  }
+  // if (userStore.isLogined) {
+  //   router.push('/')
+  // }
 })
 
 watch(

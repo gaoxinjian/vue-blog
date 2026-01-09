@@ -97,12 +97,12 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
-import { useUserStore } from '@/stores/user'
+// import { useUserStore } from '@/stores/user'
 import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
 import { User, Message, Lock } from '@element-plus/icons-vue'
 
 const router = useRouter()
-const userStore = useUserStore()
+// const userStore = useUserStore()
 const registerFormRef = ref<FormInstance>()
 const loading = ref(false)
 
@@ -153,25 +153,25 @@ const handleRegister = async () => {
 
   loading.value = true
 
-  try {
-    const result = await userStore.register({
-      username: registerForm.username,
-      email: registerForm.email,
-      password: registerForm.password,
-    })
+  // try {
+  //   const result = await userStore.register({
+  //     username: registerForm.username,
+  //     email: registerForm.email,
+  //     password: registerForm.password,
+  //   })
 
-    if (result.success) {
-      ElMessage.success('注册成功！')
-      router.push('/')
-    } else {
-      ElMessage.error(result.error || '注册失败')
-    }
-  } catch (error) {
-    ElMessage.error('注册过程中出现错误')
-    console.error(error)
-  } finally {
-    loading.value = false
-  }
+  //   if (result.success) {
+  //     ElMessage.success('注册成功！')
+  //     router.push('/')
+  //   } else {
+  //     ElMessage.error(result.error || '注册失败')
+  //   }
+  // } catch (error) {
+  //   ElMessage.error('注册过程中出现错误')
+  //   console.error(error)
+  // } finally {
+  //   loading.value = false
+  // }
 }
 
 const goToLogin = () => {

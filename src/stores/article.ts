@@ -152,6 +152,10 @@ export const useArticleStore = defineStore('article', () => {
     })
   }
 
+  const likeArticle = async (id: string) => {
+    return
+  }
+
   // 重置状态
   const reset = () => {
     articles.value = []
@@ -189,5 +193,6 @@ export const useArticleStore = defineStore('article', () => {
     fetchTags,
     searchArticles,
     reset,
+    likeArticle,
   }
 })
