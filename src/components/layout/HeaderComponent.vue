@@ -41,25 +41,25 @@
         <div class="user-area">
           <template v-if="!isLoginedIn">
             <el-button type="primary" size="small" @click="goToLogin">登录</el-button>
-            <el-button type="primary" size="small" @click="goToRegister">注册</el-button>
+            <!-- <el-button type="primary" size="small" @click="goToRegister">注册</el-button> -->
           </template>
           <template v-else>
             <el-dropdown @command="handleUserCommand">
               <div class="user-info">
                 <el-avatar :size="32" :src="userAvatar" class="user-avatar">
-                  {{ userInitial }}
+                  {{ isLoginedIn }}
                 </el-avatar>
                 <span class="user-name">{{ userName }}</span>
                 <el-icon><ArrowDown /></el-icon>
               </div>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item command="profile">
+                  <!-- <el-dropdown-item command="profile">
                     <el-icon><User /></el-icon>个人中心
                   </el-dropdown-item>
                   <el-dropdown-item command="articles">
                     <el-icon><Document /></el-icon>我的文章
-                  </el-dropdown-item>
+                  </el-dropdown-item> -->
                   <el-dropdown-item command="write">
                     <el-icon><Edit /></el-icon>写文章
                   </el-dropdown-item>
@@ -96,7 +96,7 @@
       <div class="mobile-menu-content">
         <div v-if="isLoginedIn" class="mobile-user">
           <el-avatar :size="48" :src="userAvatar" class="mobile-avatar">
-            {{ userInitial }}
+            {{ isLoginedIn }}
           </el-avatar>
           <div class="mobile-user-info">
             <h3>{{ userName }}</h3>
@@ -121,10 +121,10 @@
             <el-icon><User /></el-icon>
             <span>登录</span>
           </li>
-          <li v-if="!isLoginedIn" class="mobile-nav-item" @click="goToRegister">
+          <!-- <li v-if="!isLoginedIn" class="mobile-nav-item" @click="goToRegister">
             <el-icon><User /></el-icon>
             <span>注册</span>
-          </li>
+          </li> -->
           <li v-if="isLoginedIn" class="mobile-nav-item" @click="handleUserCommand('logout')">
             <el-icon><SwitchButton /></el-icon>
             <span>退出登录</span>
@@ -145,6 +145,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 
 import {
   // 图标
@@ -168,6 +169,7 @@ import {
 // import { id } from 'element-plus/es/locales.mjs'
 
 import { useThemeStore } from '@/stores/theme'
+import { storeToRefs } from 'pinia'
 
 // 响应式数据
 // const searchText = ref('')
@@ -178,42 +180,16 @@ const router = useRouter()
 const route = useRoute()
 
 // 使用Pinia Store
+const authStore = useAuthStore()
+const { user, isAuthenticated, userEmail } = storeToRefs(authStore)
+const { logout } = authStore
 
-const userStore = {
-  isLogined: false,
-  user: {
-    username: '',
-    email: '',
-    avatarUrl: '',
-  },
-  userInitial: '',
-  initialize() {
-    // 模拟初始化用户数据
-    this.isLogined = true
-    this.user = {
-      username: '游客',
-      email: 'zhangsan@example.com',
-      avatarUrl: '',
-    }
-  },
-  logout() {
-    this.isLogined = false
-    this.user = {
-      username: '',
-      email: '',
-      avatarUrl: '',
-    }
-  },
-}
 const themeStore = useThemeStore()
 
 // 计算属性，用store里的数据
-userStore.initialize() // 初始化用户数据
-const isLoginedIn = computed(() => userStore.isLogined)
-const userName = computed(() => userStore.user?.username || '未登录')
-const userEmail = computed(() => userStore.user?.email || '')
-const userAvatar = computed(() => userStore.user?.avatarUrl || '')
-const userInitial = computed(() => userStore.userInitial)
+const isLoginedIn = computed(() => isAuthenticated.value)
+const userName = computed(() => (isAuthenticated.value ? '杲新建' : '游客'))
+const userAvatar = computed(() => '')
 const isDark = computed(() => themeStore.isDark)
 
 // 导航菜单项
@@ -258,7 +234,7 @@ const toggleMobileMenu = () => {
   showMobileMenu.value = !showMobileMenu.value
 }
 
-const handleUserCommand = (command: string) => {
+const handleUserCommand = async (command: string) => {
   switch (command) {
     case 'profile':
       // router.push('/profile')
@@ -271,15 +247,17 @@ const handleUserCommand = (command: string) => {
       break
     case 'logout':
       // 处理退出登录
-      userStore.logout()
-      router.push('/')
+      const res = await logout()
+
+      if (res) {
+        router.push('/')
+      }
       break
   }
   showMobileMenu.value = false
 }
 
 onMounted(() => {
-  userStore.initialize()
   themeStore.initTheme()
 })
 </script>

@@ -36,12 +36,14 @@ export const getCurrentUser = async (): Promise<User | null> => {
       data: { session },
       error: sessionError,
     } = await supabase.auth.getSession()
+    console.log(session)
 
     if (sessionError) {
       console.warn('获取会话失败:', sessionError)
       return null
     }
 
+    // 没有会话则返回 null
     if (!session) {
       return null
     }
