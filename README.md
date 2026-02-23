@@ -60,4 +60,9 @@ npm run lint
 ![Vite](https://img.shields.io/badge/Vite-5.x-646cff)
 ![Element Plus](https://img.shields.io/badge/Element%20Plus-2.x-409eff)
 
+部署平台
+https://vercel.com/galaxys-projects-f9be057c/ggalaxy-vue-blog
+数据库平台(github账号登录)
+https://supabase.com/
+
 基于 Vue3 + TypeScript + Vite 构建的现代化个人博客系统
