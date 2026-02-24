@@ -64,5 +64,6 @@ npm run lint
 https://vercel.com/galaxys-projects-f9be057c/ggalaxy-vue-blog
 数据库平台(github账号登录)
 https://supabase.com/
+静态资源放置在七牛云
 
 基于 Vue3 + TypeScript + Vite 构建的现代化个人博客系统
