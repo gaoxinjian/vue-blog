@@ -44,9 +44,13 @@
 
         <!-- b. 音乐播放器 -->
         <section class="section-card music-player">
-          <h2><el-icon></el-icon> 此刻听觉</h2>
+          <h2><el-icon><VideoPlay /></el-icon> 此刻听觉</h2>
           <!-- 播放器组件将放在这里 -->
-          <div class="player-placeholder">播放器组件待接入</div>
+          <div class="player-placeholder">
+            <!-- <span>音乐播放器组件 (示例占位)</span> -->
+
+            <SimpleAudioPlayer :playlist="myPlaylist" />
+          </div>
           <h3>我喜欢的歌</h3>
           <ul class="playlist">
             <li v-for="song in playlist" :key="song.id">{{ song.name }} - {{ song.artist }}</li>
@@ -77,8 +81,12 @@ import {
   Headset,
   Place,
   MapLocation,
+  VideoPlay
 } from '@element-plus/icons-vue'
 import ArticleCard from '@/components/common/ArticleCard.vue'
+import SimpleAudioPlayer from '@/components/common/SimpleAudioPlayer.vue'
+import type { Song } from '@/components/common/SimpleAudioPlayer.vue'
+
 import { storeToRefs } from 'pinia'
 import { useArticleStore } from '@/stores/article'
 import { useRouter } from 'vue-router'
@@ -111,6 +119,18 @@ const playlist = ref([
   { id: 2, name: 'Blinding Lights', artist: 'The Weeknd' },
   // ... 更多歌曲
 ])
+const myPlaylist: Song[] = [
+  {
+    url: 'http://tawr0chxh.hb-bkt.clouddn.com/bgm/zhiailisi.mp3?e=1771845329&token=2xaGIcqX3EygdnQ2RJmCkCSR6sCKmsyaencAv0-s:h7JK9FI1bxD3e9o6esYEx3ITRog=',
+    name: '致爱丽丝',
+    artist: '贝多芬'
+  },
+  {
+    url: 'http://tawr0chxh.hb-bkt.clouddn.com/bgm/Jay-yequ.mp3?e=1771906178&token=2xaGIcqX3EygdnQ2RJmCkCSR6sCKmsyaencAv0-s:yLf9jO2CtcCRNaccfoXrB57XRa0=',
+    name: '夜曲',
+    artist: '周杰伦'
+  }
+]
 
 // --- “此刻我在...” 数据 ---
 const currentStatus = ref({
@@ -240,7 +260,6 @@ const openGitHub = () => {
 .player-placeholder {
   background: #f8f9fa;
   border-radius: 8px;
-  height: 80px;
   display: flex;
   align-items: center;
   justify-content: center;
