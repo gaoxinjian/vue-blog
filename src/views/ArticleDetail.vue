@@ -11,9 +11,9 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { marked } from 'marked' // 使用你已有的marked库
-import hljs from 'highlight.js' // 使用你已有的highlight.js
-import 'highlight.js/styles/github.css' // 引入代码高亮样式
+import { marked } from 'marked'
+import hljs from 'highlight.js'
+import 'highlight.js/styles/github.css'
 import { useArticleStore } from '@/stores/article'
 import { Article } from '@/api/types'
 import dayjs from 'dayjs'

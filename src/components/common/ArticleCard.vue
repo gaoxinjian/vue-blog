@@ -19,7 +19,7 @@
     <!-- 文章内容 -->
     <div class="article-content">
       <!-- 分类标签 -->
-      <div class="article-category">
+      <div class="article-category" v-if="article.category && article.category.length > 0">
         <el-tag size="small" effect="plain">
           {{ article.category }}
         </el-tag>
@@ -69,25 +69,6 @@
           </span>
         </div>
 
-        <div class="meta-right">
-          <!-- 阅读量 -->
-          <div class="meta-item" @click.stop>
-            <el-icon><View /></el-icon>
-            <span>{{ formatNumber(0) }}</span>
-          </div>
-
-          <!-- 点赞 -->
-          <div class="meta-item" @click.stop="$emit('like')">
-            <el-icon :class="{ liked: isLiked }"><Star /></el-icon>
-            <span>{{ formatNumber(0) }}</span>
-          </div>
-
-          <!-- 评论 -->
-          <div class="meta-item" @click.stop>
-            <el-icon><ChatDotRound /></el-icon>
-            <span>{{ formatNumber(0) }}</span>
-          </div>
-        </div>
       </div>
     </div>
   </el-card>
@@ -276,34 +257,6 @@ const formatNumber = (num: number) => {
   color: var(--el-text-color-secondary);
 }
 
-.meta-right {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.meta-item {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 0.875rem;
-  color: var(--el-text-color-secondary);
-  cursor: pointer;
-  transition: color 0.3s ease;
-}
-
-.meta-item:hover {
-  color: var(--el-color-primary);
-}
-
-.meta-item .el-icon {
-  font-size: 1rem;
-}
-
-.meta-item .el-icon.liked {
-  color: #ff6b6b;
-  animation: like 0.5s ease;
-}
 
 @keyframes like {
   0% {
@@ -333,9 +286,5 @@ const formatNumber = (num: number) => {
     gap: 12px;
   }
 
-  .meta-right {
-    width: 100%;
-    justify-content: space-between;
-  }
 }
 </style>
