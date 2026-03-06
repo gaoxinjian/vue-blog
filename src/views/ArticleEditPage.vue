@@ -136,18 +136,17 @@ import 'github-markdown-css/github-markdown.css'
 import { useArticleStore } from '@/stores/article'
 import { Article } from '@/api/types'
 
-// 在 ArticleEditorView.vue 的 <script setup> 顶部添加
 interface ArticleFormData {
   id?: number
-  title: string
-  content: string
-  summary: string
+  title: string  // 文章标题
+  content: string  // 文章内容（Markdown格式）
+  summary: string  // 文章摘要
   author: string
   authorId: number
-  category: string
-  tags: string[]
-  coverImage?: string
-  isPublished: boolean // 注意：你的store用 isPublished，而不是 status
+  category: string  // 文章分类
+  tags: string[]  // 文章标签列表
+  coverImage?: string  // 可选的封面图字段
+  isPublished: boolean // 文章是否公开
 }
 
 const route = useRoute()

@@ -19,7 +19,6 @@ export const getArticles = async (
     sortOrder = 'desc',
     category,
     tag,
-    published = true,
   } = params
 
   const from = (page - 1) * pageSize
@@ -39,10 +38,6 @@ export const getArticles = async (
 
   if (tag) {
     query = query.contains('tags', [tag])
-  }
-
-  if (published) {
-    query = query.eq('is_published', true)
   }
 
   // 排序
