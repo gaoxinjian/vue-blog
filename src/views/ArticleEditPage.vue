@@ -103,6 +103,11 @@
         </div>
       </el-form-item>
 
+      <!-- 收否公开 -->
+      <el-form-item label="公开状态" prop="isPublished">
+        <el-switch v-model="form.isPublished" active-text="公开" inactive-text="私密" />
+      </el-form-item>
+
       <el-form-item class="form-actions">
         <el-button type="primary" @click="handleSubmit('publish')" :loading="submitting">
           {{ isEditMode ? '更新文章' : '发布文章' }}
@@ -168,7 +173,6 @@ const form = reactive<ArticleFormData>({
   tags: [] as string[],
   summary: '',
   content: '',
-  // 移除 status，改为 isPublished
   isPublished: false,
   // 可选：添加封面图字段
   coverImage: '',

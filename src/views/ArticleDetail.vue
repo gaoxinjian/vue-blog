@@ -14,6 +14,7 @@ import { useRoute } from 'vue-router'
 import { marked } from 'marked'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/github.css'
+import 'github-markdown-css/github-markdown.css'
 import { useArticleStore } from '@/stores/article'
 import { Article } from '@/api/types'
 import dayjs from 'dayjs'
@@ -43,6 +44,7 @@ onMounted(async () => {
   // 将Markdown内容转换为HTML
   if (article.value && article.value.content) {
     htmlContent.value = await marked(article.value.content)
+
   }
 })
 </script>
