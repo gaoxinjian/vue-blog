@@ -59,7 +59,7 @@
             <el-avatar :size="24" :src="getAvatarUrl(user.userEmail)">
               {{ user.userEmail }}
             </el-avatar>
-            <span class="author-name">{{ user.userEmail }}</span>
+            <span class="author-name">{{ article.author_name }}</span>
           </div>
 
           <div class="meta-divider">·</div>

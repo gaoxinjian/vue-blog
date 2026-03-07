@@ -141,8 +141,6 @@ interface ArticleFormData {
   title: string  // 文章标题
   content: string  // 文章内容（Markdown格式）
   summary: string  // 文章摘要
-  author: string
-  authorId: number
   category: string  // 文章分类
   tags: string[]  // 文章标签列表
   coverImage?: string  // 可选的封面图字段
@@ -175,8 +173,6 @@ const form = reactive<ArticleFormData>({
   isPublished: false,
   // 可选：添加封面图字段
   coverImage: '',
-  author: '杲新建',
-  authorId: 0,
 })
 
 // 模拟数据
@@ -262,13 +258,12 @@ const handleSubmit = async (action: 'publish' | 'draft') => {
       | 'likes'
       | 'comments'
       | 'updated_at'
-      | 'author'
-      | 'author_id'
       | 'cover_image'
       | 'summary'
       | 'tags'
       | 'category'
       | 'created_at'
+      | 'author_name'
     > = {
       title: form.title,
       content: form.content,
