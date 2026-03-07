@@ -41,6 +41,7 @@ __screenshots__/
 .vercel
 .env.development
 .env.production
+.env.example
 
 # 但保留 .env.example
-!.env.example
+# !.env.example

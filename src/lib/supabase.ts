@@ -14,7 +14,6 @@ export interface Database {
           category: string | null
           tags: string[]
           is_published: boolean
-          published_at: string | null
           created_at: string
           updated_at: string
         }
@@ -27,7 +26,6 @@ export interface Database {
           category?: string | null
           tags?: string[]
           is_published?: boolean
-          published_at?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -40,7 +38,6 @@ export interface Database {
           category?: string | null
           tags?: string[]
           is_published?: boolean
-          published_at?: string | null
           created_at?: string
           updated_at?: string
         }

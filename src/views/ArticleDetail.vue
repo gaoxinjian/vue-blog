@@ -1,7 +1,7 @@
 <template>
   <div class="article-detail" v-if="article">
     <h1>{{ article.title }}</h1>
-    <div class="meta">发布于 {{ dayjs(article.published_at).format('YYYY-MM-DD HH:mm') }}</div>
+    <div class="meta">发布于 {{ dayjs(article.created_at).format('YYYY-MM-DD HH:mm') }}</div>
     <!-- 关键：使用v-html渲染Markdown转换后的HTML -->
     <div class="content markdown-body" v-html="htmlContent"></div>
   </div>

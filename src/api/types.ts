@@ -14,7 +14,6 @@ export interface Article extends BaseEntity {
   category: string | null
   tags: string[]
   is_published: boolean
-  published_at: string | null
 }
 
 export interface ArticleCreateDto {

@@ -231,12 +231,8 @@ const loadArticleData = async () => {
         form.category = String(article.category)
         form.tags = article.tags || []
         form.content = article.content || ''
-        // 注意映射：这里用isPublished，不是status
         form.isPublished = article.is_published || false
 
-        // 如果编辑页面需要显示作者信息
-        // form.author = article.author
-        // form.authorId = article.authorId
       }
     } catch (error) {
       console.error('加载文章数据失败:', error)
@@ -266,7 +262,6 @@ const handleSubmit = async (action: 'publish' | 'draft') => {
       | 'likes'
       | 'comments'
       | 'updated_at'
-      | 'published_at'
       | 'author'
       | 'author_id'
       | 'cover_image'
@@ -279,7 +274,7 @@ const handleSubmit = async (action: 'publish' | 'draft') => {
       content: form.content,
       excerpt: form.summary,
       // 这里需要实际的作者信息，可以先写死或从用户store获取
-      is_published: action === 'publish',
+      is_published: form.isPublished,
     }
 
     // 根据模式调用不同的store方法
@@ -292,7 +287,7 @@ const handleSubmit = async (action: 'publish' | 'draft') => {
         category: form.category,
         tags: form.tags,
         cover_image: form.coverImage,
-        is_published: action === 'publish',
+        is_published: form.isPublished,
       })
       ElMessage.success('文章更新成功')
     } else {

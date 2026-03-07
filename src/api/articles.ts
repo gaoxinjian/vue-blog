@@ -93,7 +93,6 @@ export const createArticle = async (articleData: ArticleCreateDto): Promise<Arti
     category: articleData.category || null,
     tags: articleData.tags || [],
     is_published: articleData.is_published || false,
-    published_at: articleData.is_published ? now : null,
     created_at: now,
     updated_at: now,
   }
@@ -130,7 +129,6 @@ export const updateArticle = async (
 
   if (articleData.is_published !== undefined) {
     updateData.is_published = articleData.is_published
-    updateData.published_at = articleData.is_published ? now : null
   }
 
   const { data, error } = await supabase
