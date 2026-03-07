@@ -188,7 +188,7 @@ const themeStore = useThemeStore()
 
 // 计算属性，用store里的数据
 const isLoginedIn = computed(() => isAuthenticated.value)
-const userName = computed(() => (isAuthenticated.value ? '杲新建' : '游客'))
+const userName = computed(() => (isAuthenticated.value ? user.value?.display_name : '游客'))
 const userAvatar = computed(() => '')
 const isDark = computed(() => themeStore.isDark)
 

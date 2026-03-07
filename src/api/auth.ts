@@ -14,6 +14,7 @@ export const login = async (credentials: LoginCredentials): Promise<AuthResponse
     user: {
       id: data.user.id,
       email: data.user.email!,
+      display_name: data.user.user_metadata.display_name || data.user.email?.split('@')[0] || '游客',
     },
     session: {
       access_token: data.session.access_token,
@@ -51,6 +52,7 @@ export const getCurrentUser = async (): Promise<User | null> => {
     return {
       id: session.user.id,
       email: session.user.email!,
+      display_name: session.user.user_metadata.display_name || session.user.email?.split('@')[0] || '游客',
     }
   } catch (err) {
     console.warn('获取当前用户失败（忽略错误）:', err)

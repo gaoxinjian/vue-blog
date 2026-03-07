@@ -35,6 +35,7 @@ export const useAuthStore = defineStore('auth', () => {
       user.value = {
         id: authResponse.user.id,
         email: authResponse.user.email,
+        display_name: authResponse.user.display_name || authResponse.user.email?.split('@')[0] || 'User',
       }
 
       error.value = null
@@ -83,10 +84,11 @@ export const useAuthStore = defineStore('auth', () => {
   supabase.auth.onAuthStateChange((event, session) => {
     console.log('认证状态变化:', event)
 
-    if (event === 'SIGNED_IN' && session?.user) {
+    if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session?.user) {
       user.value = {
         id: session.user.id,
         email: session.user.email!,
+        display_name: session.user.user_metadata.display_name || session.user.email?.split('@')[0] || '游客',
       }
     } else if (event === 'SIGNED_OUT') {
       user.value = null

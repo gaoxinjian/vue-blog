@@ -65,6 +65,7 @@ export interface AuthResponse {
   user: {
     id: string
     email: string
+    display_name?: string
   }
   session: {
     access_token: string
@@ -76,4 +77,5 @@ export interface AuthResponse {
 export interface User {
   id: string
   email: string
+  display_name?: string
 }

@@ -54,7 +54,8 @@ onMounted(async () => {
 /* 假设这是为文章详情页面的组件或页面添加的样式，可以放在 src/styles/ArticleDetail.css 或类似文件中 */
 
 .article-detail {
-  max-width: 800px;
+  background-color: #fff;
+  max-width: 920px;
   margin: 0 auto;
   padding: 20px;
   font-family: Arial, sans-serif;
