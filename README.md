@@ -67,4 +67,4 @@ https://supabase.com/
 
 静态资源放置在七牛云
 
-![基于 Vue3 + TypeScript 构建的现代化个人博客(点击前往)](https://blog.ggalaxy4123.com/)
+[基于 Vue3 + TypeScript 构建的现代化个人博客(点击前往)](https://blog.ggalaxy4123.com/)
