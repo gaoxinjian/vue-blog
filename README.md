@@ -1,6 +1,5 @@
 # ggalaxy-blog
 
-This template should help get you started developing with Vue 3 in Vite.
 
 ## Recommended IDE Setup
 
@@ -60,10 +59,12 @@ npm run lint
 ![Vite](https://img.shields.io/badge/Vite-5.x-646cff)
 ![Element Plus](https://img.shields.io/badge/Element%20Plus-2.x-409eff)
 
-部署平台
+### 部署平台
 https://vercel.com/galaxys-projects-f9be057c/ggalaxy-vue-blog
-数据库平台(github账号登录)
+
+### 数据库平台(github账号登录)
 https://supabase.com/
+
 静态资源放置在七牛云
 
-基于 Vue3 + TypeScript + Vite 构建的现代化个人博客系统
+![基于 Vue3 + TypeScript 构建的现代化个人博客(点击前往)](https://blog.ggalaxy4123.com/)

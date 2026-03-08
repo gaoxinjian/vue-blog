@@ -51,7 +51,6 @@ onMounted(async () => {
 
 <style scoped>
 /* 文章详情页面的CSS样式 */
-/* 假设这是为文章详情页面的组件或页面添加的样式，可以放在 src/styles/ArticleDetail.css 或类似文件中 */
 
 .article-detail {
   background-color: #fff;
