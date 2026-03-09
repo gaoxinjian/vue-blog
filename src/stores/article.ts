@@ -7,12 +7,13 @@ import type {
   ArticleUpdateDto,
   PaginatedResponse,
   QueryParams,
+  Categories,
 } from '@/api/types'
 
 export const useArticleStore = defineStore('article', () => {
   const articles = ref<Article[]>([])
   const currentArticle = ref<Article | null>(null)
-  const categories = ref<string[]>([])
+  const categories = ref<Categories[]>([])
   const tags = ref<string[]>([])
   const loading = ref(false)
   const error = ref<string | null>(null)
@@ -130,6 +131,7 @@ export const useArticleStore = defineStore('article', () => {
   const fetchCategories = async () => {
     try {
       categories.value = await api.articles.getCategories()
+      return categories.value
     } catch (err) {
       console.error('获取分类列表失败:', err)
     }

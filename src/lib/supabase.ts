@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
+import { Categories } from '@/api/types'
 
 // 完整的数据库类型定义
 export interface Database {
@@ -11,11 +12,13 @@ export interface Database {
           content: string
           excerpt: string
           cover_image: string | null
-          category: string | null
+          category: number | null
+          category_detail: Categories | null
           tags: string[]
           is_published: boolean
           created_at: string
           updated_at: string
+          author_name: string
         }
         Insert: {
           id?: string
@@ -23,7 +26,7 @@ export interface Database {
           content: string
           excerpt: string
           cover_image?: string | null
-          category?: string | null
+          category?: number | null
           tags?: string[]
           is_published?: boolean
           created_at?: string
@@ -35,11 +38,33 @@ export interface Database {
           content?: string
           excerpt?: string
           cover_image?: string | null
-          category?: string | null
+          category?: number | null
           tags?: string[]
           is_published?: boolean
           created_at?: string
           updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'articles_category_fkey'
+            columns: ['category']
+            referencedRelation: 'categories'
+            referencedColumns: ['id']
+          }
+        ]
+      }
+      categories: {
+        Row: {
+          id: number
+          content: string
+        }
+        Insert: {
+          id?: number
+          content: string
+        }
+        Update: {
+          id?: number
+          content?: string
         }
         Relationships: []
       }

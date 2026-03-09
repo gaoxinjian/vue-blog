@@ -20,9 +20,9 @@
         <el-select v-model="form.category" placeholder="请选择分类" clearable>
           <el-option
             v-for="cat in categories"
-            :key="cat.value"
-            :label="cat.label"
-            :value="cat.value"
+            :key="cat.id"
+            :label="cat.content"
+            :value="cat.id"
           />
         </el-select>
       </el-form-item>
@@ -134,14 +134,14 @@ import 'bytemd/dist/index.css'
 import 'highlight.js/styles/github.css'
 import 'github-markdown-css/github-markdown.css'
 import { useArticleStore } from '@/stores/article'
-import { Article } from '@/api/types'
+import { Article, Categories, ArticleCreateDto } from '@/api/types'
 
 interface ArticleFormData {
   id?: number
   title: string  // 文章标题
   content: string  // 文章内容（Markdown格式）
   summary: string  // 文章摘要
-  category: string  // 文章分类
+  category: number | null  // 文章分类
   tags: string[]  // 文章标签列表
   coverImage?: string  // 可选的封面图字段
   isPublished: boolean // 文章是否公开
@@ -166,7 +166,7 @@ const activeTab = ref('edit')
 const form = reactive<ArticleFormData>({
   id: undefined as number | undefined,
   title: '',
-  category: '',
+  category: null,
   tags: [] as string[],
   summary: '',
   content: '',
@@ -175,13 +175,11 @@ const form = reactive<ArticleFormData>({
   coverImage: '',
 })
 
-// 模拟数据
-const categories = ref([
-  { label: '技术笔记', value: 'tech' },
-  { label: '生活随笔', value: 'life' },
-  { label: '旅行游记', value: 'travel' },
-  { label: '读书心得', value: 'reading' },
-])
+// 文章分类
+const categories = ref<Categories[]>()
+const loadCategories = async () => {
+  categories.value =  await articleStore.fetchCategories()
+}
 
 const existingTags = ref(['Vue', 'JavaScript', '旅行', '读书', '音乐', '徒步'])
 
@@ -224,7 +222,7 @@ const loadArticleData = async () => {
         // 将store的数据结构映射到表单
         form.id = Number(article.id)
         form.title = article.title
-        form.category = String(article.category)
+        form.category = article.category || null
         form.tags = article.tags || []
         form.content = article.content || ''
         form.isPublished = article.is_published || false
@@ -250,25 +248,19 @@ const handleSubmit = async (action: 'publish' | 'draft') => {
   try {
     // 准备要提交的数据 - 适配你的store接口
     const articleData: Omit<
-      Article,
+      ArticleCreateDto,
       | 'id'
-      | 'createdAt'
-      | 'updatedAt'
       | 'views'
       | 'likes'
       | 'comments'
-      | 'updated_at'
       | 'cover_image'
       | 'summary'
       | 'tags'
-      | 'category'
-      | 'created_at'
-      | 'author_name'
     > = {
       title: form.title,
       content: form.content,
       excerpt: form.summary,
-      // 这里需要实际的作者信息，可以先写死或从用户store获取
+      category: form.category,
       is_published: form.isPublished,
     }
 
@@ -310,7 +302,7 @@ const handleReset = () => {
     // 重置表单数据
     form.id = undefined
     form.title = ''
-    form.category = ''
+    form.category = null
     form.tags = []
     form.summary = ''
     form.content = ''
@@ -334,6 +326,7 @@ const goBack = () => {
 
 // 页面加载时初始化
 onMounted(() => {
+  loadCategories()
   loadArticleData()
 })
 </script>

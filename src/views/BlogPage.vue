@@ -28,7 +28,7 @@
             <el-radio-group v-model="selectedCategory" @change="handleCategoryChange">
               <el-radio-button value="all">全部</el-radio-button>
               <el-radio-button v-for="category in categories" :key="category" :value="category">
-                {{ category }}
+                {{ category.content }}
               </el-radio-button>
             </el-radio-group>
           </div>
@@ -143,7 +143,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { useArticleStore } from '@/stores/article'
-import { Article } from '@/api/types'
+import { Article, Categories } from '@/api/types'
 import ArticleCard from '@/components/common/ArticleCard.vue'
 import { Search, Folder, PriceTag } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
@@ -162,7 +162,7 @@ const pageSize = ref(6)
 // 从store中获取数据
 const { loading, articles, categories, tags } = storeToRefs(articleStore)
 
-const { fetchArticles, likeArticle } = articleStore
+const { fetchArticles, likeArticle, fetchCategories } = articleStore
 
 // 计算属性
 const hasActiveFilters = computed(() => {
@@ -181,10 +181,12 @@ const handleSearch = () => {
   currentPage.value = 1
 }
 
-const handleCategoryChange = (category: string) => {
-  selectedCategory.value = category
-  // articleStore.selectedCategory = category
+const handleCategoryChange = async (category: Categories) => {
+  selectedCategory.value = category.content === 'all' ? '' : category.content
   currentPage.value = 1
+  await fetchArticles({
+    category: category.content === 'all' ? undefined : category.id
+  })
 }
 
 const handleTagClick = (tag: string) => {
@@ -247,8 +249,7 @@ const formatDate = (dateString: string) => {
 
 // 生命周期
 onMounted(async () => {
-  console.log('blog page mounted')
-
+  fetchCategories()
   await fetchArticles()
   // 从store同步筛选状态
   // searchQuery.value = articleStore.searchQuery

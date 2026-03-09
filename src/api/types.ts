@@ -11,7 +11,8 @@ export interface Article extends BaseEntity {
   content: string
   excerpt: string
   cover_image: string | null
-  category: string | null
+  category: number | null
+  category_detail?: Categories | null
   tags: string[]
   is_published: boolean
   author_name: string
@@ -22,7 +23,7 @@ export interface ArticleCreateDto {
   content: string
   excerpt: string
   cover_image?: string | null
-  category?: string | null
+  category?: number | null
   tags?: string[]
   is_published?: boolean
 }
@@ -51,7 +52,7 @@ export interface QueryParams {
   search?: string
   sortBy?: 'created_at' | 'updated_at' | 'title'
   sortOrder?: 'asc' | 'desc'
-  category?: string
+  category?: number | null
   tag?: string
   published?: boolean
 }
@@ -79,4 +80,9 @@ export interface User {
   id: string
   email: string
   display_name?: string
+}
+
+export interface Categories {
+  id: number
+  content: string
 }

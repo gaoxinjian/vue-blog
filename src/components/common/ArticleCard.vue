@@ -19,9 +19,9 @@
     <!-- 文章内容 -->
     <div class="article-content">
       <!-- 分类标签 -->
-      <div class="article-category" v-if="article.category && article.category.length > 0">
+      <div class="article-category" v-if="article.category">
         <el-tag size="small" effect="plain">
-          {{ article.category }}
+          {{ article.category_detail?.content || '未分类' }}
         </el-tag>
       </div>
 

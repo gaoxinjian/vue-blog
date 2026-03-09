@@ -5,7 +5,9 @@ import type {
   ArticleUpdateDto,
   PaginatedResponse,
   QueryParams,
+  Categories,
 } from './types'
+// import { un } from 'vue-router/dist/router-CWoNjPRp.mjs'
 
 // 获取文章列表
 export const getArticles = async (
@@ -25,7 +27,7 @@ export const getArticles = async (
   const to = from + pageSize - 1
 
   // 构建查询
-  let query = supabase.from('articles').select('*', { count: 'exact' })
+  let query = supabase.from('articles').select('*, categories(id, content)', { count: 'exact' })
 
   // 应用筛选条件
   if (search) {
@@ -55,8 +57,14 @@ export const getArticles = async (
 
   const total = count || 0
 
+  // 处理分类详情，我感觉这里不处理也没问题，但是先不管这个
+  const articles = data.map((article) => ({
+    ...article,
+    category_detail: article.categories || null,
+  })) as Article[]
+
   return {
-    data: data as Article[],
+    data: articles as Article[],
     pagination: {
       page,
       pageSize,
@@ -70,7 +78,7 @@ export const getArticles = async (
 
 // 获取单个文章
 export const getArticleById = async (id: string): Promise<Article> => {
-  const { data, error } = await supabase.from('articles').select('*').eq('id', id).single()
+  const { data, error } = await supabase.from('articles').select('*, categories(id, content)').eq('id', id).single()
 
   if (error) {
     console.error(`获取文章 ${id} 失败:`, error)
@@ -90,7 +98,7 @@ export const createArticle = async (articleData: ArticleCreateDto): Promise<Arti
     content: articleData.content,
     excerpt: articleData.excerpt,
     cover_image: articleData.cover_image || null,
-    category: articleData.category || null,
+    category: articleData.category,
     tags: articleData.tags || [],
     is_published: articleData.is_published || false,
     created_at: now,
@@ -157,22 +165,21 @@ export const deleteArticle = async (id: string): Promise<void> => {
 }
 
 // 获取所有分类
-export const getCategories = async (): Promise<string[]> => {
+export const getCategories = async (): Promise<Categories[]> => {
   const { data, error } = await supabase
-    .from('articles')
-    .select('category')
-    .not('category', 'is', null)
-    .eq('is_published', true)
+    .from('categories')
+    .select('*')
 
   if (error) {
     console.error('获取分类列表失败:', error)
     throw error
   }
 
+
   // 类型断言并去重
-  const articles = data as { category: string }[]
-  const categories = [...new Set(articles.map((item) => item.category).filter(Boolean))]
-  return categories
+  const categories = data as { id: number; content: string }[]
+  const newdata = Array.from(new Set(categories))
+  return newdata
 }
 
 // 获取所有标签
@@ -192,7 +199,7 @@ export const getTags = async (): Promise<string[]> => {
 
 // 根据分类获取文章
 export const getArticlesByCategory = async (
-  category: string,
+  category: number | undefined,
   params: Omit<QueryParams, 'category'> = {},
 ): Promise<PaginatedResponse<Article>> => {
   return getArticles({
