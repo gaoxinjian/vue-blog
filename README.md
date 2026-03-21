@@ -1,5 +1,70 @@
 # ggalaxy-blog
 
+一个基于 Vue 3 + TypeScript 构建的现代化个人博客系统。
+
+## 技术栈
+
+- **前端框架:** Vue 3 + Vite + TypeScript
+- **UI 组件库:** Element Plus
+- **状态管理:** Pinia
+- **后端/数据库:** Supabase (PostgreSQL + Auth)
+- **Markdown 编辑器:** ByteMD
+- **部署平台:** Vercel
+
+## 功能特性
+
+- ✨ 文章发布、编辑、删除（支持 Markdown）
+- 🏷️ 分类与标签管理
+- 🔍 文章搜索与筛选
+- 👤 用户认证（登录/注册）
+- 📱 响应式布局，适配移动端
+- 🎵 内置音乐播放器
+- 🌓 主题切换（预留）
+
+## 快速开始
+
+```bash
+# 安装依赖
+npm install
+
+# 启动开发服务器
+npm run dev
+
+# 构建生产版本
+npm run build
+
+# 运行单元测试
+npm run test:unit
+
+# 代码检查
+npm run lint
+```
+
+## 环境变量
+
+复制 `.env.example` 并配置：
+
+```bash
+cp .env.example .env.development
+cp .env.example .env.production
+```
+
+需要配置的环境变量：
+- `VITE_SUPABASE_URL` - Supabase 项目 URL
+- `VITE_SUPABASE_ANON_KEY` - Supabase 匿名密钥
+
+## 项目结构
+
+```
+src/
+├── api/          # API 接口
+├── components/   # 组件
+├── lib/          # 第三方库配置
+├── router/       # 路由配置
+├── stores/       # Pinia 状态管理
+├── utils/        # 工具函数
+└── views/        # 页面视图
+```
 
 ## Recommended IDE Setup
 
