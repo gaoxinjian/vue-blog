@@ -137,7 +137,7 @@ import { useArticleStore } from '@/stores/article'
 import { Article, Categories, ArticleCreateDto } from '@/api/types'
 
 interface ArticleFormData {
-  id?: number
+  id?: string
   title: string  // 文章标题
   content: string  // 文章内容（Markdown格式）
   summary: string  // 文章摘要
@@ -164,7 +164,7 @@ const activeTab = ref('edit')
 // 表单数据
 // 修改 form 响应式对象
 const form = reactive<ArticleFormData>({
-  id: undefined as number | undefined,
+  id: undefined as string | undefined,
   title: '',
   category: null,
   tags: [] as string[],
@@ -220,12 +220,14 @@ const loadArticleData = async () => {
 
       if (article) {
         // 将store的数据结构映射到表单
-        form.id = Number(article.id)
+        form.id = article.id
         form.title = article.title
         form.category = article.category || null
         form.tags = article.tags || []
         form.content = article.content || ''
         form.isPublished = article.is_published || false
+        form.summary = article.excerpt || ''
+        form.coverImage = article.cover_image || ''
 
       }
     } catch (error) {
@@ -247,33 +249,27 @@ const handleSubmit = async (action: 'publish' | 'draft') => {
 
   try {
     // 准备要提交的数据 - 适配你的store接口
-    const articleData: Omit<
-      ArticleCreateDto,
-      | 'id'
-      | 'views'
-      | 'likes'
-      | 'comments'
-      | 'cover_image'
-      | 'summary'
-      | 'tags'
-    > = {
+    const articleData: ArticleCreateDto = {
       title: form.title,
       content: form.content,
       excerpt: form.summary,
       category: form.category,
+      tags: form.tags,
+      cover_image: form.coverImage || null,
       is_published: form.isPublished,
     }
 
     // 根据模式调用不同的store方法
     if (isEditMode.value && form.id) {
       // 编辑模式：调用updateArticle
-      await articleStore.updateArticle(String(form.id), {
-        id: String(form.id),
+      await articleStore.updateArticle(form.id, {
+        id: form.id,
         title: form.title,
         content: form.content,
+        excerpt: form.summary,
         category: form.category,
         tags: form.tags,
-        cover_image: form.coverImage,
+        cover_image: form.coverImage || null,
         is_published: form.isPublished,
       })
       ElMessage.success('文章更新成功')

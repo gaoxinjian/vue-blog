@@ -80,18 +80,19 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
 
+  // 先初始化认证状态
+  await authStore.initAuth()
+  const isAuthenticated = authStore.isAuthenticated
+
   // 检查路由是否需要认证
   if (to.meta.requiresAuth) {
-    // 检查用户是否已登录
-    const isAuthenticated = authStore.isAuthenticated
-
     if (!isAuthenticated) {
       // 未登录，重定向到登录页
       next('/login')
     } else {
       next()
     }
-  } else if (to.path === '/login' && authStore.isAuthenticated) {
+  } else if (to.path === '/login' && isAuthenticated) {
     // 已登录用户访问登录页，重定向到首页
     next('/')
   } else {

@@ -32,7 +32,7 @@
 
       <!-- 摘要 -->
       <p class="article-summary">
-        {{ '摘要' }}
+        {{ article.excerpt || '暂无摘要' }}
       </p>
 
       <!-- 标签 -->

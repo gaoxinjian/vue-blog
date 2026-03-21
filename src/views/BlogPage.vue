@@ -25,9 +25,9 @@
             </div>
           </template>
           <div class="filter-content">
-            <el-radio-group v-model="selectedCategory" @change="handleCategoryChange">
-              <el-radio-button value="all">全部</el-radio-button>
-              <el-radio-button v-for="category in categories" :key="category" :value="category">
+            <el-radio-group v-model="selectedCategoryId" @change="handleCategoryChange">
+              <el-radio-button :value="null">全部</el-radio-button>
+              <el-radio-button v-for="category in categories" :key="category.id" :value="category.id">
                 {{ category.content }}
               </el-radio-button>
             </el-radio-group>
@@ -87,8 +87,8 @@
       <main class="main-content">
         <!-- 筛选状态显示 -->
         <div v-if="hasActiveFilters" class="active-filters">
-          <el-tag v-if="selectedCategory" closable @close="clearCategory">
-            分类: {{ selectedCategory }}
+          <el-tag v-if="selectedCategoryId !== null" closable @close="clearCategory">
+            分类: {{ selectedCategoryName }}
           </el-tag>
           <el-tag v-if="selectedTag" closable @close="clearTag"> 标签: {{ selectedTag }} </el-tag>
           <el-button v-if="hasActiveFilters" type="text" size="small" @click="clearAllFilters">
@@ -100,7 +100,7 @@
         <div class="articles-grid">
           <template v-if="articles.length > 0">
             <article-card
-              v-for="article in paginatedArticles"
+              v-for="article in articles"
               :key="article.id"
               :article="article"
               @click="goToArticle(article.id)"
@@ -117,12 +117,12 @@
         </div>
 
         <!-- 分页 -->
-        <div v-if="articles.length > 0" class="pagination">
+        <div v-if="pagination.total > 0" class="pagination">
           <el-pagination
             v-model:current-page="currentPage"
             v-model:page-size="pageSize"
             :page-sizes="[6, 12, 24, 48]"
-            :total="articles.length"
+            :total="pagination.total"
             layout="total, sizes, prev, pager, next, jumper"
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
@@ -154,65 +154,84 @@ const articleStore = useArticleStore()
 
 // 响应式数据
 const searchQuery = ref('')
-const selectedCategory = ref('')
+const selectedCategoryId = ref<number | null>(null)
 const selectedTag = ref('')
 const currentPage = ref(1)
 const pageSize = ref(6)
 
 // 从store中获取数据
-const { loading, articles, categories, tags } = storeToRefs(articleStore)
+const { loading, articles, categories, tags, pagination } = storeToRefs(articleStore)
 
 const { fetchArticles, likeArticle, fetchCategories } = articleStore
 
 // 计算属性
 const hasActiveFilters = computed(() => {
-  return selectedCategory.value !== '' || selectedTag.value !== '' || searchQuery.value !== ''
+  return selectedCategoryId.value !== null || selectedTag.value !== '' || searchQuery.value !== ''
 })
 
-const paginatedArticles = computed(() => {
-  const start = (currentPage.value - 1) * pageSize.value
-  const end = start + pageSize.value
-  return articles.value.slice(start, end)
+const selectedCategoryName = computed(() => {
+  if (selectedCategoryId.value === null) return ''
+  const category = categories.value.find(c => c.id === selectedCategoryId.value)
+  return category?.content || ''
 })
 
 // 方法
-const handleSearch = () => {
-  // articleStore.searchQuery = searchQuery.value
-  currentPage.value = 1
-}
-
-const handleCategoryChange = async (category: Categories) => {
-  selectedCategory.value = category.content === 'all' ? '' : category.content
+const handleSearch = async () => {
   currentPage.value = 1
   await fetchArticles({
-    category: category.content === 'all' ? undefined : category.id
+    search: searchQuery.value || undefined,
+    page: currentPage.value,
+    pageSize: pageSize.value
   })
 }
 
-const handleTagClick = (tag: string) => {
+const handleCategoryChange = async (categoryId: number | null) => {
+  selectedCategoryId.value = categoryId
+  currentPage.value = 1
+  await fetchArticles({
+    category: categoryId ?? undefined,
+    page: currentPage.value,
+    pageSize: pageSize.value
+  })
+}
+
+const handleTagClick = async (tag: string) => {
   selectedTag.value = tag === selectedTag.value ? '' : tag
-  // articleStore.selectedTag = selectedTag.value
   currentPage.value = 1
+  await fetchArticles({
+    tag: selectedTag.value || undefined,
+    page: currentPage.value,
+    pageSize: pageSize.value
+  })
 }
 
-const clearCategory = () => {
-  selectedCategory.value = ''
-  // articleStore.selectedCategory = ''
+const clearCategory = async () => {
+  selectedCategoryId.value = null
   currentPage.value = 1
+  await fetchArticles({
+    page: currentPage.value,
+    pageSize: pageSize.value
+  })
 }
 
-const clearTag = () => {
+const clearTag = async () => {
   selectedTag.value = ''
-  // articleStore.selectedTag = ''
   currentPage.value = 1
+  await fetchArticles({
+    page: currentPage.value,
+    pageSize: pageSize.value
+  })
 }
 
-const clearAllFilters = () => {
+const clearAllFilters = async () => {
   searchQuery.value = ''
-  selectedCategory.value = ''
+  selectedCategoryId.value = null
   selectedTag.value = ''
-  articleStore.reset()
   currentPage.value = 1
+  await fetchArticles({
+    page: currentPage.value,
+    pageSize: pageSize.value
+  })
 }
 
 const handleLike = async (articleId: string) => {
@@ -228,13 +247,27 @@ const goToArticle = (id: string) => {
   router.push(`/article/${id}`)
 }
 
-const handleSizeChange = (size: number) => {
+const handleSizeChange = async (size: number) => {
   pageSize.value = size
   currentPage.value = 1
+  await fetchArticles({
+    search: searchQuery.value || undefined,
+    category: selectedCategoryId.value ?? undefined,
+    tag: selectedTag.value || undefined,
+    page: currentPage.value,
+    pageSize: pageSize.value
+  })
 }
 
-const handleCurrentChange = (page: number) => {
+const handleCurrentChange = async (page: number) => {
   currentPage.value = page
+  await fetchArticles({
+    search: searchQuery.value || undefined,
+    category: selectedCategoryId.value ?? undefined,
+    tag: selectedTag.value || undefined,
+    page: currentPage.value,
+    pageSize: pageSize.value
+  })
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
@@ -249,12 +282,11 @@ const formatDate = (dateString: string) => {
 
 // 生命周期
 onMounted(async () => {
-  fetchCategories()
-  await fetchArticles()
-  // 从store同步筛选状态
-  // searchQuery.value = articleStore.searchQuery
-  // selectedCategory.value = articleStore.selectedCategory
-  // selectedTag.value = articleStore.selectedTag
+  await fetchCategories()
+  await fetchArticles({
+    page: currentPage.value,
+    pageSize: pageSize.value
+  })
 })
 </script>
 
